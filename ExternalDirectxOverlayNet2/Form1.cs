@@ -69,6 +69,7 @@ namespace ExternalDirectxOverlayNet2
         private string hero = "";
         private List<Build> builds;
         private bool displayTalents = true;
+        private Prompt prompt;
 
         #endregion
 
@@ -94,6 +95,8 @@ namespace ExternalDirectxOverlayNet2
             //Get the resolution of the monitor
             Rectangle resolution = Screen.PrimaryScreen.Bounds;
 
+            prompt = new Prompt();
+
             //Init DirectX
             //This initializes the DirectX device. It needs to be done once.
             //The alpha channel in the backbuffer is critical.
@@ -109,7 +112,7 @@ namespace ExternalDirectxOverlayNet2
             line = new D3D.Line(this.device);
 
             sprite = new D3D.Sprite(this.device);
-            texture = D3D.TextureLoader.FromFile(this.device, "banana_transparent.png");
+            //texture = D3D.TextureLoader.FromFile(this.device, "banana_transparent.png");
 
             GetTalentInfo(hero);
 
@@ -220,9 +223,7 @@ namespace ExternalDirectxOverlayNet2
 
         void HandleCustomHotKey()
         {
-            Prompt prompt = new Prompt();
-
-            string promptValue = prompt.ShowDialog("", "", this);
+            string promptValue = prompt.ShowDialog(this) == DialogResult.OK ? prompt.hero : "";
             GetTalentInfo(promptValue);
         }
 
