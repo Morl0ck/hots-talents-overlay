@@ -1,0 +1,10 @@
+C:\Users\Morl0ck\Documents\Visual Studio 2015\Projects\ExternalDirectxOverlayNet2\ExternalDirectxOverlayNet2\bin\x86\Debug\ExternalDirectxOverlayNet2.exe.config
+C:\Users\Morl0ck\Documents\Visual Studio 2015\Projects\ExternalDirectxOverlayNet2\ExternalDirectxOverlayNet2\bin\x86\Debug\ExternalDirectxOverlayNet2.exe
+C:\Users\Morl0ck\Documents\Visual Studio 2015\Projects\ExternalDirectxOverlayNet2\ExternalDirectxOverlayNet2\bin\x86\Debug\ExternalDirectxOverlayNet2.pdb
+C:\Users\Morl0ck\Documents\Visual Studio 2015\Projects\ExternalDirectxOverlayNet2\ExternalDirectxOverlayNet2\obj\x86\Debug\ExternalDirectxOverlayNet2.Form1.resources
+C:\Users\Morl0ck\Documents\Visual Studio 2015\Projects\ExternalDirectxOverlayNet2\ExternalDirectxOverlayNet2\obj\x86\Debug\ExternalDirectxOverlayNet2.Prompt.resources
+C:\Users\Morl0ck\Documents\Visual Studio 2015\Projects\ExternalDirectxOverlayNet2\ExternalDirectxOverlayNet2\obj\x86\Debug\ExternalDirectxOverlayNet2.Properties.Resources.resources
+C:\Users\Morl0ck\Documents\Visual Studio 2015\Projects\ExternalDirectxOverlayNet2\ExternalDirectxOverlayNet2\obj\x86\Debug\ExternalDirectxOverlayNet2.csproj.GenerateResource.Cache
+C:\Users\Morl0ck\Documents\Visual Studio 2015\Projects\ExternalDirectxOverlayNet2\ExternalDirectxOverlayNet2\obj\x86\Debug\ExternalDirectxOverlayNet2.exe
+C:\Users\Morl0ck\Documents\Visual Studio 2015\Projects\ExternalDirectxOverlayNet2\ExternalDirectxOverlayNet2\obj\x86\Debug\ExternalDirectxOverlayNet2.pdb
+C:\Users\Morl0ck\Documents\Visual Studio 2015\Projects\ExternalDirectxOverlayNet2\ExternalDirectxOverlayNet2\obj\x86\Debug\ExternalDirectxOverlayNet2.csprojResolveAssemblyReference.cache
