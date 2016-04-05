@@ -23,6 +23,7 @@ namespace ExternalDirectxOverlayNet2
 
         internal HotKeyManager MyHotKeyManager;
         GlobalHotKey ghkCustom = new GlobalHotKey("ghkCustom", Modifiers.Shift | Modifiers.Control, Keys.F);
+        GlobalHotKey ghkToggleVisibility = new GlobalHotKey("ghkToggleVisibility", Modifiers.Shift | Modifiers.Control, Keys.V);
 
         private Margins marg;
 
@@ -67,6 +68,7 @@ namespace ExternalDirectxOverlayNet2
 
         private string hero = "";
         private List<Build> builds;
+        private bool displayTalents = true;
 
         #endregion
 
@@ -183,8 +185,10 @@ namespace ExternalDirectxOverlayNet2
         void RegisterHotKeys()
         {
             ghkCustom.Enabled = true;
+            ghkToggleVisibility.Enabled = true;
 
             MyHotKeyManager.AddGlobalHotKey(ghkCustom);
+            MyHotKeyManager.AddGlobalHotKey(ghkToggleVisibility);
         }
 
         void MyHotKeyManager_GlobalHotKeyPressed(object sender, GlobalHotKeyEventArgs e)
@@ -194,7 +198,11 @@ namespace ExternalDirectxOverlayNet2
                 HandleCustomHotKey();
                 return;
             }
-            System.Diagnostics.Process.Start((e.HotKey.Tag as string));
+            else if (e.HotKey.Name.ToLower() == "ghktogglevisibility")
+            {
+                ToggleVisibility();
+                return;
+            }
         }
 
         void HandleCustomHotKey()
@@ -203,6 +211,11 @@ namespace ExternalDirectxOverlayNet2
 
             string promptValue = prompt.ShowDialog("", "", this);
             GetTalentInfo(promptValue);
+        }
+
+        void ToggleVisibility()
+        {
+            displayTalents = !displayTalents;
         }
 
         #endregion
@@ -252,7 +265,7 @@ namespace ExternalDirectxOverlayNet2
                 //DrawCircle(500, 500, 100, Color.Red);
 
                 //DrawTalentBoxes(500, 500, 4, 3);
-                DrawBuilds(builds);
+                if (displayTalents == true) { DrawBuilds(builds); }
 
                 //Draw Sprite
                 //sprite.Begin(D3D.SpriteFlags.AlphaBlend);
