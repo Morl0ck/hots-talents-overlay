@@ -2,14 +2,14 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Text;
+using System.Threading;
 //add Namespaces
 using Microsoft.DirectX;
 using D3D = Microsoft.DirectX.Direct3D;
 //Fizzler
 using HtmlAgilityPack;
 using Fizzler.Systems.HtmlAgilityPack;
-using System.Text;
-using System.Threading;
 //Hotkey Management
 using BondTech.HotkeyManagement.Win;
 using System.Collections.Generic;
@@ -18,6 +18,9 @@ namespace ExternalDirectxOverlayNet2
 {
     public partial class Form1 : Form
     {
+
+        #region Variables
+
         internal HotKeyManager MyHotKeyManager;
         GlobalHotKey ghkCustom = new GlobalHotKey("ghkCustom", Modifiers.Shift | Modifiers.Control, Keys.F);
 
@@ -62,10 +65,10 @@ namespace ExternalDirectxOverlayNet2
         private static D3D.Sprite sprite;
         private static D3D.Texture texture;
 
-        private StringBuilder info;
-
         private string hero = "";
         private List<Build> builds;
+
+        #endregion
 
         public Form1()
         {
@@ -83,10 +86,6 @@ namespace ExternalDirectxOverlayNet2
 
             MyHotKeyManager = new HotKeyManager(this);
             MyHotKeyManager.GlobalHotKeyPressed += new GlobalHotKeyEventHandler(MyHotKeyManager_GlobalHotKeyPressed);
-            //MyHotKeyManager.LocalHotKeyPressed += new LocalHotKeyEventHandler(MyHotKeyManager_LocalHotKeyPressed);
-            //MyHotKeyManager.ChordStarted += new PreChordHotkeyEventHandler(MyHotKeyManager_ChordStarted);
-            //MyHotKeyManager.ChordPressed += new ChordHotKeyEventHandler(MyHotKeyManager_ChordPressed);
-            //btnAddHotKey.Click += delegate { AddNewHotKey(); };
             RegisterHotKeys();
             MyHotKeyManager.DisableOnManagerFormInactive = true;
 
@@ -108,7 +107,7 @@ namespace ExternalDirectxOverlayNet2
             line = new D3D.Line(this.device);
 
             sprite = new D3D.Sprite(this.device);
-            texture = D3D.TextureLoader.FromFile(device, "banana_transparent.png");
+            texture = D3D.TextureLoader.FromFile(this.device, "banana_transparent.png");
 
             GetTalentInfo(hero);
 
@@ -119,7 +118,6 @@ namespace ExternalDirectxOverlayNet2
 
         private void GetTalentInfo(string hero)
         {
-            info = new StringBuilder();
             this.builds = new List<Build>();
 
             hero = hero.ToLower().Replace(' ', '-').Replace('.', '-');
@@ -145,7 +143,6 @@ namespace ExternalDirectxOverlayNet2
 
                 var title = thisItem.InnerText;
                 Console.WriteLine(title);
-                //info.AppendLine(title);
 
                 build.name = title;
 
@@ -155,7 +152,6 @@ namespace ExternalDirectxOverlayNet2
 
                     var talentLevel = talentNode.QuerySelector("span.heroes_tldr_talent_tier_subtitle").InnerText;
                     Console.WriteLine(talentLevel);
-                    //info.AppendLine(talentLevel);
 
                     talent.name = talentLevel;
 
@@ -171,7 +167,6 @@ namespace ExternalDirectxOverlayNet2
                     }
 
                     Console.WriteLine(selection + "/" + total);
-                    //info.AppendLine(selection + "/" + total);
 
                     talent.total = total;
                     talent.selection = selection;
@@ -180,10 +175,10 @@ namespace ExternalDirectxOverlayNet2
                 }
 
                 builds.Add(build);
-
-                //info.AppendLine("");
             }
         }
+
+        #region HotKey Methods
 
         void RegisterHotKeys()
         {
@@ -197,11 +192,9 @@ namespace ExternalDirectxOverlayNet2
             if (e.HotKey.Name.ToLower() == "ghkcustom")
             {
                 HandleCustomHotKey();
-                //LogEvents(e.HotKey);
                 return;
             }
             System.Diagnostics.Process.Start((e.HotKey.Tag as string));
-            //LogEvents(e.HotKey);
         }
 
         void HandleCustomHotKey()
@@ -211,6 +204,10 @@ namespace ExternalDirectxOverlayNet2
             string promptValue = prompt.ShowDialog("", "", this);
             GetTalentInfo(promptValue);
         }
+
+        #endregion
+
+        #region FPS Methods
 
         int _frames = 0;
         int _lastTickCount = 0;
@@ -231,6 +228,8 @@ namespace ExternalDirectxOverlayNet2
         {
             return _lastFrameRate;
         }
+
+        #endregion
 
         private void dxThread()
         {
@@ -262,9 +261,6 @@ namespace ExternalDirectxOverlayNet2
 
                 //Draw frames per second
                 DrawShadowText(GetFPS().ToString(), new Point(10, 10), Color.Red);
-
-                //Draw the build info
-                //DrawShadowText(info.ToString(), new Point(10, 50), Color.Red);
 
                 device.EndScene();
                 device.Present();
