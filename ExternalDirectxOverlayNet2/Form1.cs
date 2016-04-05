@@ -120,7 +120,7 @@ namespace ExternalDirectxOverlayNet2
 
         private void GetTalentInfo(string hero)
         {
-            hero = hero.Trim();
+            hero = hero.ToLower().Trim();
             if (hero.Length == 0)
                 return;
 
@@ -135,7 +135,7 @@ namespace ExternalDirectxOverlayNet2
             if (hero.Substring(hero.Length - 1, 1).Equals("."))
                 hero = hero.Substring(0, hero.Length - 1);
 
-            hero = hero.ToLower().Replace(' ', '-').Replace('.', '-');
+            hero = hero.Replace(' ', '-').Replace('.', '-').Replace("'", "");
 
             //get the page
             var web = new HtmlWeb();
