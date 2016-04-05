@@ -120,7 +120,20 @@ namespace ExternalDirectxOverlayNet2
 
         private void GetTalentInfo(string hero)
         {
+            hero = hero.Trim();
+            if (hero.Length == 0)
+                return;
+
+            if (hero == "rengar")
+            {
+                MessageBox.Show("It's Rehgar Biv. Get it right.");
+                return;
+            }
+
             this.builds = new List<Build>();
+
+            if (hero.Substring(hero.Length - 1, 1).Equals("."))
+                hero = hero.Substring(0, hero.Length - 1);
 
             hero = hero.ToLower().Replace(' ', '-').Replace('.', '-');
 
@@ -265,7 +278,8 @@ namespace ExternalDirectxOverlayNet2
                 //DrawCircle(500, 500, 100, Color.Red);
 
                 //DrawTalentBoxes(500, 500, 4, 3);
-                if (displayTalents == true) { DrawBuilds(builds); }
+                if (displayTalents && builds != null && builds.Count > 0)
+                    DrawBuilds(builds);
 
                 //Draw Sprite
                 //sprite.Begin(D3D.SpriteFlags.AlphaBlend);
