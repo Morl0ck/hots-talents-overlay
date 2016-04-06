@@ -7,7 +7,7 @@ namespace ExternalDirectxOverlayNet2
 {
     public partial class Prompt : Form
     {
-        public string hero { get { return textBox1.Text; } }
+        public TextBox txtHero { get { return textBox1; } }
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -21,11 +21,6 @@ namespace ExternalDirectxOverlayNet2
         public Prompt()
         {
             InitializeComponent();
-
-            this.TopMost = true;
-
-            //Set the window to be topmost
-            SetWindowPos(this.Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
 
             #region Hero List
             var heroList = new string[] {
@@ -103,6 +98,14 @@ namespace ExternalDirectxOverlayNet2
                 DialogResult = DialogResult.OK;
                 Close();
             }
+        }
+
+        private void Prompt_Load(object sender, EventArgs e)
+        {
+            //Set the window to be topmost
+            SetWindowPos(this.Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
+
+            this.textBox1.Select();
         }
     }
 }

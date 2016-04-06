@@ -24,6 +24,9 @@ namespace ExternalDirectxOverlayNet2
         internal HotKeyManager MyHotKeyManager;
         GlobalHotKey ghkCustom = new GlobalHotKey("ghkCustom", Modifiers.Shift | Modifiers.Control, Keys.F);
         GlobalHotKey ghkToggleVisibility = new GlobalHotKey("ghkToggleVisibility", Modifiers.Shift | Modifiers.Control, Keys.V);
+        GlobalHotKey ghkCloseApplication = new GlobalHotKey("ghkCloseApplication", Modifiers.Shift | Modifiers.Control | Modifiers.Alt, Keys.Q);
+        GlobalHotKey ghkNextTalent = new GlobalHotKey("ghkNextTalent", Modifiers.Control, Keys.Tab);
+        GlobalHotKey ghkPrevTalent = new GlobalHotKey("ghkPrevTalent", Modifiers.Shift | Modifiers.Control, Keys.Tab);
 
         private Margins marg;
 
@@ -66,16 +69,18 @@ namespace ExternalDirectxOverlayNet2
         private static D3D.Sprite sprite;
         private static D3D.Texture texture;
 
-        private string hero = "";
+        private static int buildDisplaying = 1;
+
+        private static string hero = "";
         private List<Build> builds;
         private bool displayTalents = true;
         private Prompt prompt;
+        
 
         #endregion
 
         public Form1()
         {
-
             InitializeComponent();
 
             //Make the window's border completely transparant
@@ -111,7 +116,7 @@ namespace ExternalDirectxOverlayNet2
             font = new D3D.Font(device, new System.Drawing.Font(new FontFamily("Arial"), 10, FontStyle.Regular));
             line = new D3D.Line(this.device);
 
-            sprite = new D3D.Sprite(this.device);
+            //sprite = new D3D.Sprite(this.device);
             //texture = D3D.TextureLoader.FromFile(this.device, "banana_transparent.png");
 
             GetTalentInfo(hero);
@@ -121,31 +126,41 @@ namespace ExternalDirectxOverlayNet2
             dx.Start();
         }
 
-        private void GetTalentInfo(string hero)
+        private void GetTalentInfo(string h)
         {
-            hero = hero.ToLower().Trim();
-            if (hero.Length == 0)
+            h = h.Trim();
+
+            if (h.Length == 0)
                 return;
 
-            if (hero == "rengar")
+            hero = h;
+
+            h = h.ToLower();
+
+            if (h == "rengar")
             {
                 MessageBox.Show("It's Rehgar Biv. Get it right.");
                 return;
             }
 
+            //Reset the builds list
             this.builds = new List<Build>();
+            //Reset the build number to the first one
+            buildDisplaying = 1;
 
-            if (hero.Substring(hero.Length - 1, 1).Equals("."))
-                hero = hero.Substring(0, hero.Length - 1);
+            //If Hero ends with a period, remove that period
+            //(e.g. E.T.C.)
+            if (h.Substring(h.Length - 1, 1).Equals("."))
+                h = h.Substring(0, h.Length - 1);
 
-            hero = hero.Replace(' ', '-').Replace('.', '-').Replace("'", "");
+            h = h.Replace("'", "").Replace(". ", "-").Replace(' ', '-').Replace('.', '-');
 
-            //get the page
+            //Get the page
             var web = new HtmlWeb();
-            var document = web.Load("http://www.icy-veins.com/heroes/" + hero + "-build-guide");
+            var document = web.Load("http://www.icy-veins.com/heroes/" + h + "-build-guide");
             var body = document.DocumentNode.SelectSingleNode("//body");
 
-            //loop through all div tags with item css class
+            //Loop through all div tags with item css class
             foreach (var item in body.QuerySelectorAll("div.heroes_tldr_talents"))
             {
                 Build build = new Build();
@@ -202,9 +217,15 @@ namespace ExternalDirectxOverlayNet2
         {
             ghkCustom.Enabled = true;
             ghkToggleVisibility.Enabled = true;
+            ghkCloseApplication.Enabled = true;
+            ghkNextTalent.Enabled = true;
+            ghkPrevTalent.Enabled = true;
 
             MyHotKeyManager.AddGlobalHotKey(ghkCustom);
             MyHotKeyManager.AddGlobalHotKey(ghkToggleVisibility);
+            MyHotKeyManager.AddGlobalHotKey(ghkCloseApplication);
+            MyHotKeyManager.AddGlobalHotKey(ghkNextTalent);
+            MyHotKeyManager.AddGlobalHotKey(ghkPrevTalent);
         }
 
         void MyHotKeyManager_GlobalHotKeyPressed(object sender, GlobalHotKeyEventArgs e)
@@ -219,11 +240,34 @@ namespace ExternalDirectxOverlayNet2
                 ToggleVisibility();
                 return;
             }
+            else if (e.HotKey.Name.ToLower() == "ghkcloseapplication")
+            {
+                this.Close();
+                return;
+            }
+            else if (e.HotKey.Name.ToLower() == "ghknexttalent")
+            {
+                buildDisplaying++;
+                if (builds != null && buildDisplaying > builds.Count)
+                    buildDisplaying = 1; //This is to allow loop around
+                return;
+            }
+            else if (e.HotKey.Name.ToLower() == "ghkprevtalent")
+            {
+                buildDisplaying--;
+                if (builds != null && buildDisplaying < 1)
+                    buildDisplaying = builds.Count; //This is to allow loop around
+                return;
+            }
         }
 
         void HandleCustomHotKey()
         {
-            string promptValue = prompt.ShowDialog(this) == DialogResult.OK ? prompt.hero : "";
+            if (prompt.Visible)
+            {
+                return;
+            }
+            string promptValue = prompt.ShowDialog(this) == DialogResult.OK ? prompt.txtHero.Text : "";
             GetTalentInfo(promptValue);
         }
 
@@ -378,18 +422,29 @@ namespace ExternalDirectxOverlayNet2
         {
             var yDistance = 50;
 
-            foreach (var build in builds)
+            //Only display 1 build at a time.
+            var build = builds[buildDisplaying - 1];
+
+            //foreach (var build in builds)
+            //{
+            DrawShadowText(hero + " (" + buildDisplaying + "/" + builds.Count + ")", new Point(10, yDistance), Color.Orange);
+            yDistance = yDistance + 20;
+            string buildName = build.name.Trim();
+            if (buildName.Length > 80)
             {
-                DrawShadowText(build.name, new Point(10, yDistance), Color.Red);
-                yDistance = yDistance + 20;
-                foreach (var talent in build.talents)
-                {
-                    DrawShadowText(talent.name, new Point(10, yDistance), Color.Red);
-                    DrawTalentBoxes(70, yDistance + 3, talent.total, talent.selection);
-                    yDistance = yDistance + 20;
-                }
+                buildName = buildName.Insert(buildName.IndexOf(" ", 60, buildName.Length - 60), "\n").Replace("\n ", "\n");
+            }
+            DrawShadowText(buildName, new Point(10, yDistance), Color.Red);
+            Size textSize = TextRenderer.MeasureText(buildName, new Font(new FontFamily("Arial"), 10, FontStyle.Regular));
+            yDistance = yDistance + textSize.Height + (20 - textSize.Height % 20);
+            foreach (var talent in build.talents)
+            {
+                DrawShadowText(talent.name, new Point(10, yDistance), Color.Red);
+                DrawTalentBoxes(70, yDistance + 3, talent.total, talent.selection);
                 yDistance = yDistance + 20;
             }
+            yDistance = yDistance + 20;
+            //}
         }
 
         #endregion
