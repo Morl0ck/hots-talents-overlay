@@ -87,7 +87,6 @@ namespace ExternalDirectxOverlayNet2
 
         private void close_Form(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
             this.Close();
         }
 
