@@ -137,10 +137,16 @@ namespace ExternalDirectxOverlayNet2
 
             h = h.ToLower();
 
-            if (h == "rengar")
+            switch (h)                
             {
-                MessageBox.Show("It's Rehgar Biv. Get it right.");
-                return;
+                case "rengar":
+                    {
+                        MessageBox.Show("It's Rehgar Biv. Get it right.");
+                        return;
+                    }
+                case "etc":
+                    hero = "e-t-c";
+                    break;
             }
 
             //Reset the builds list
