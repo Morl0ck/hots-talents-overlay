@@ -145,7 +145,7 @@ namespace ExternalDirectxOverlayNet2
                         return;
                     }
                 case "etc":
-                    hero = "e-t-c";
+                    h = "e-t-c";
                     break;
             }
 
