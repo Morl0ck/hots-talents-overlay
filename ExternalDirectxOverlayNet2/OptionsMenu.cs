@@ -30,6 +30,8 @@ namespace ExternalDirectxOverlayNet2
         void SaveOptions()
         {
             Settings1.Default.textColor = btnTextColor.ForeColor;
+
+            Settings1.Default.Save();
         }
     }
 }
