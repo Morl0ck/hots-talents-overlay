@@ -25,6 +25,7 @@ namespace ExternalDirectxOverlayNet2
         GlobalHotKey ghkCustom = new GlobalHotKey("ghkCustom", Modifiers.Shift | Modifiers.Control, Keys.F);
         GlobalHotKey ghkToggleVisibility = new GlobalHotKey("ghkToggleVisibility", Modifiers.Shift | Modifiers.Control, Keys.V);
         GlobalHotKey ghkCloseApplication = new GlobalHotKey("ghkCloseApplication", Modifiers.Shift | Modifiers.Control | Modifiers.Alt, Keys.Q);
+        GlobalHotKey ghkOptionsMenu = new GlobalHotKey("ghkOptionsMenu", Modifiers.Shift | Modifiers.Control | Modifiers.Alt, Keys.O);
         GlobalHotKey ghkNextTalent = new GlobalHotKey("ghkNextTalent", Modifiers.Control, Keys.Tab);
         GlobalHotKey ghkPrevTalent = new GlobalHotKey("ghkPrevTalent", Modifiers.Shift | Modifiers.Control, Keys.Tab);
 
@@ -75,6 +76,7 @@ namespace ExternalDirectxOverlayNet2
         private List<Build> builds;
         private bool displayTalents = true;
         private Prompt prompt;
+        private OptionsMenu optionsMenu;
         
 
         #endregion
@@ -101,6 +103,7 @@ namespace ExternalDirectxOverlayNet2
             Rectangle resolution = Screen.PrimaryScreen.Bounds;
 
             prompt = new Prompt();
+            optionsMenu = new OptionsMenu();
 
             //Init DirectX
             //This initializes the DirectX device. It needs to be done once.
@@ -224,46 +227,46 @@ namespace ExternalDirectxOverlayNet2
             ghkCustom.Enabled = true;
             ghkToggleVisibility.Enabled = true;
             ghkCloseApplication.Enabled = true;
+            ghkOptionsMenu.Enabled = true;
             ghkNextTalent.Enabled = true;
             ghkPrevTalent.Enabled = true;
 
             MyHotKeyManager.AddGlobalHotKey(ghkCustom);
             MyHotKeyManager.AddGlobalHotKey(ghkToggleVisibility);
             MyHotKeyManager.AddGlobalHotKey(ghkCloseApplication);
+            MyHotKeyManager.AddGlobalHotKey(ghkOptionsMenu);
             MyHotKeyManager.AddGlobalHotKey(ghkNextTalent);
             MyHotKeyManager.AddGlobalHotKey(ghkPrevTalent);
         }
 
         void MyHotKeyManager_GlobalHotKeyPressed(object sender, GlobalHotKeyEventArgs e)
         {
-            if (e.HotKey.Name.ToLower() == "ghkcustom")
+            switch (e.HotKey.Name.ToLower())
             {
-                HandleCustomHotKey();
-                return;
-            }
-            else if (e.HotKey.Name.ToLower() == "ghktogglevisibility")
-            {
-                ToggleVisibility();
-                return;
-            }
-            else if (e.HotKey.Name.ToLower() == "ghkcloseapplication")
-            {
-                this.Close();
-                return;
-            }
-            else if (e.HotKey.Name.ToLower() == "ghknexttalent")
-            {
-                buildDisplaying++;
-                if (builds != null && buildDisplaying > builds.Count)
-                    buildDisplaying = 1; //This is to allow loop around
-                return;
-            }
-            else if (e.HotKey.Name.ToLower() == "ghkprevtalent")
-            {
-                buildDisplaying--;
-                if (builds != null && buildDisplaying < 1)
-                    buildDisplaying = builds.Count; //This is to allow loop around
-                return;
+                case "ghkcustom":
+                    HandleCustomHotKey();
+                    return;
+                case "ghktogglevisibility":
+                    ToggleVisibility();
+                    return;
+                case "ghkcloseapplication":
+                    this.Close();
+                    return;
+                case "ghknexttalent":
+                    buildDisplaying++;
+                    if (builds != null && buildDisplaying > builds.Count)
+                        buildDisplaying = 1; //This is to allow loop around
+                    return;
+                case "ghkprevtalent":
+                    buildDisplaying--;
+                    if (builds != null && buildDisplaying < 1)
+                        buildDisplaying = builds.Count; //This is to allow loop around
+                    return;
+                case "ghkoptionsmenu":
+                    HandleOptionsMenu();
+                    return;
+                default:
+                    return;
             }
         }
 
@@ -271,10 +274,21 @@ namespace ExternalDirectxOverlayNet2
         {
             if (prompt.Visible)
             {
+                prompt.Close();
                 return;
             }
             string promptValue = prompt.ShowDialog(this) == DialogResult.OK ? prompt.txtHero.Text : "";
             GetTalentInfo(promptValue);
+        }
+
+        void HandleOptionsMenu()
+        {
+            if (optionsMenu.Visible)
+            {
+                optionsMenu.Close();
+                return;
+            }
+            optionsMenu.ShowDialog();
         }
 
         void ToggleVisibility()
@@ -324,9 +338,9 @@ namespace ExternalDirectxOverlayNet2
                 //Place your rendering logic here
                 string dateTime = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
                 Size textSize = TextRenderer.MeasureText(dateTime, new Font(new FontFamily("Arial"), 10, FontStyle.Regular));
-                DrawShadowText(dateTime, new Point(this.Width - textSize.Width, 10), Color.Red);
-                //DrawLine(0, 0, this.Width, this.Height, 1, Color.Red);
-                //DrawCircle(500, 500, 100, Color.Red);
+                DrawShadowText(dateTime, new Point(this.Width - textSize.Width, 10), Settings1.Default.textColor);
+                //DrawLine(0, 0, this.Width, this.Height, 1, Settings1.Default.textColor);
+                //DrawCircle(500, 500, 100, Settings1.Default.textColor);
 
                 //DrawTalentBoxes(500, 500, 4, 3);
                 if (displayTalents && builds != null && builds.Count > 0)
@@ -338,7 +352,7 @@ namespace ExternalDirectxOverlayNet2
                 //sprite.End();
 
                 //Draw frames per second
-                DrawShadowText(GetFPS().ToString(), new Point(10, 10), Color.Red);
+                DrawShadowText(GetFPS().ToString(), new Point(10, 10), Settings1.Default.textColor);
 
                 device.EndScene();
                 device.Present();
@@ -417,9 +431,9 @@ namespace ExternalDirectxOverlayNet2
         {
             for (int i = 1; i <= total; i++)
             {
-                DrawBox(x + i*20, y, 10, 10, 1, Color.Red);
+                DrawBox(x + i*20, y, 10, 10, 1, Settings1.Default.textColor);
                 if (i == selection)
-                    DrawFilledBox(x + i * 20, y, 10, 10, Color.Red);
+                    DrawFilledBox(x + i * 20, y, 10, 10, Settings1.Default.textColor);
             }
             
         }
@@ -440,12 +454,12 @@ namespace ExternalDirectxOverlayNet2
             {
                 buildName = buildName.Insert(buildName.IndexOf(" ", 60, buildName.Length - 60), "\n").Replace("\n ", "\n");
             }
-            DrawShadowText(buildName, new Point(10, yDistance), Color.Red);
+            DrawShadowText(buildName, new Point(10, yDistance), Settings1.Default.textColor);
             Size textSize = TextRenderer.MeasureText(buildName, new Font(new FontFamily("Arial"), 10, FontStyle.Regular));
             yDistance = yDistance + textSize.Height + (20 - textSize.Height % 20);
             foreach (var talent in build.talents)
             {
-                DrawShadowText(talent.name, new Point(10, yDistance), Color.Red);
+                DrawShadowText(talent.name, new Point(10, yDistance), Settings1.Default.textColor);
                 DrawTalentBoxes(70, yDistance + 3, talent.total, talent.selection);
                 yDistance = yDistance + 20;
             }
