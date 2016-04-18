@@ -22,5 +22,89 @@ namespace ExternalDirectxOverlayNet2.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Red")]
+        public global::System.Drawing.Color TextColor {
+            get {
+                return ((global::System.Drawing.Color)(this["TextColor"]));
+            }
+            set {
+                this["TextColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Control+Alt+F")]
+        public string ghkFindHeroBind {
+            get {
+                return ((string)(this["ghkFindHeroBind"]));
+            }
+            set {
+                this["ghkFindHeroBind"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Control+Alt+V")]
+        public string ghkToggleVisibilityBind {
+            get {
+                return ((string)(this["ghkToggleVisibilityBind"]));
+            }
+            set {
+                this["ghkToggleVisibilityBind"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Control+Alt+O")]
+        public string ghkOptionsMenuBind {
+            get {
+                return ((string)(this["ghkOptionsMenuBind"]));
+            }
+            set {
+                this["ghkOptionsMenuBind"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Control+Alt+Q")]
+        public string ghkCloseApplicationBind {
+            get {
+                return ((string)(this["ghkCloseApplicationBind"]));
+            }
+            set {
+                this["ghkCloseApplicationBind"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Control+Tab")]
+        public string ghkNextTalentBind {
+            get {
+                return ((string)(this["ghkNextTalentBind"]));
+            }
+            set {
+                this["ghkNextTalentBind"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Control+Shift+Tab")]
+        public string ghkPrevTalentBind {
+            get {
+                return ((string)(this["ghkPrevTalentBind"]));
+            }
+            set {
+                this["ghkPrevTalentBind"] = value;
+            }
+        }
     }
 }
