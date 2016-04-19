@@ -75,7 +75,7 @@ namespace ExternalDirectxOverlayNet2
         private bool displayTalents = true;
         private Prompt prompt;
         private OptionsMenu optionsMenu;
-        
+
 
         #endregion
 
@@ -138,7 +138,7 @@ namespace ExternalDirectxOverlayNet2
 
             h = h.ToLower();
 
-            switch (h)                
+            switch (h)
             {
                 case "rengar":
                     {
@@ -230,7 +230,7 @@ namespace ExternalDirectxOverlayNet2
                 MyHotKeyManager.RemoveGlobalHotKey(ghkOptionsMenu);
                 MyHotKeyManager.RemoveGlobalHotKey(ghkNextTalent);
                 MyHotKeyManager.RemoveGlobalHotKey(ghkPrevTalent);
-            }          
+            }
             Properties.Settings.Default.Reload();
 
             var HotKeys = new List<GlobalHotKey>();
@@ -242,7 +242,7 @@ namespace ExternalDirectxOverlayNet2
             var Debug4 = Properties.Settings.Default.ghkOptionsMenuBind;
             var Debug5 = Properties.Settings.Default.ghkNextTalentBind;
             var Debug6 = Properties.Settings.Default.ghkPrevTalentBind;
-
+            
             ghkFindHero = GetGlobalHotKey("ghkFindHero", Properties.Settings.Default.ghkFindHeroBind);
             HotKeys.Add(ghkFindHero);
 
@@ -261,10 +261,12 @@ namespace ExternalDirectxOverlayNet2
             ghkPrevTalent = GetGlobalHotKey("ghkPrevTalent", Properties.Settings.Default.ghkPrevTalentBind);
             HotKeys.Add(ghkPrevTalent);
 
+            MyHotKeyManager.SuppressException = true;
             foreach (GlobalHotKey ghk in HotKeys)
-            {
+            {                
                 MyHotKeyManager.AddGlobalHotKey(ghk);
             }
+            MyHotKeyManager.SuppressException = false;
         }
 
         private static GlobalHotKey GetGlobalHotKey(string name, string key)
@@ -485,11 +487,11 @@ namespace ExternalDirectxOverlayNet2
         {
             for (int i = 1; i <= total; i++)
             {
-                DrawBox(x + i*20, y, 10, 10, 1, Properties.Settings.Default.TextColor);
+                DrawBox(x + i * 20, y, 10, 10, 1, Properties.Settings.Default.TextColor);
                 if (i == selection)
                     DrawFilledBox(x + i * 20, y, 10, 10, Properties.Settings.Default.TextColor);
             }
-            
+
         }
 
         public static void DrawBuilds(List<Build> builds)

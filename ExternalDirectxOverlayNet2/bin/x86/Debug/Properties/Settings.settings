@@ -1,0 +1,27 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ExternalDirectxOverlayNet2.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="TextColor" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">Red</Value>
+    </Setting>
+    <Setting Name="ghkFindHeroBind" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Control+Alt+F</Value>
+    </Setting>
+    <Setting Name="ghkToggleVisibilityBind" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Control+Alt+V</Value>
+    </Setting>
+    <Setting Name="ghkOptionsMenuBind" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Control+Alt+O</Value>
+    </Setting>
+    <Setting Name="ghkCloseApplicationBind" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Control+Alt+Q</Value>
+    </Setting>
+    <Setting Name="ghkNextTalentBind" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Control+Tab</Value>
+    </Setting>
+    <Setting Name="ghkPrevTalentBind" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Control+Shift+Tab</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
