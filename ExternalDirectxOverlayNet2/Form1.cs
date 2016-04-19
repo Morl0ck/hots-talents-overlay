@@ -18,16 +18,14 @@ namespace ExternalDirectxOverlayNet2
 {
     public partial class Form1 : Form
     {
-
         #region Variables
-
         internal HotKeyManager MyHotKeyManager;
-        GlobalHotKey ghkCustom = new GlobalHotKey("ghkCustom", Modifiers.Shift | Modifiers.Control, Keys.F);
-        GlobalHotKey ghkToggleVisibility = new GlobalHotKey("ghkToggleVisibility", Modifiers.Shift | Modifiers.Control, Keys.V);
-        GlobalHotKey ghkCloseApplication = new GlobalHotKey("ghkCloseApplication", Modifiers.Shift | Modifiers.Control | Modifiers.Alt, Keys.Q);
-        GlobalHotKey ghkOptionsMenu = new GlobalHotKey("ghkOptionsMenu", Modifiers.Shift | Modifiers.Control | Modifiers.Alt, Keys.O);
-        GlobalHotKey ghkNextTalent = new GlobalHotKey("ghkNextTalent", Modifiers.Control, Keys.Tab);
-        GlobalHotKey ghkPrevTalent = new GlobalHotKey("ghkPrevTalent", Modifiers.Shift | Modifiers.Control, Keys.Tab);
+        GlobalHotKey ghkFindHero;
+        GlobalHotKey ghkToggleVisibility;
+        GlobalHotKey ghkCloseApplication;
+        GlobalHotKey ghkOptionsMenu;
+        GlobalHotKey ghkNextTalent;
+        GlobalHotKey ghkPrevTalent;
 
         private Margins marg;
 
@@ -77,7 +75,7 @@ namespace ExternalDirectxOverlayNet2
         private bool displayTalents = true;
         private Prompt prompt;
         private OptionsMenu optionsMenu;
-        
+
 
         #endregion
 
@@ -96,7 +94,7 @@ namespace ExternalDirectxOverlayNet2
 
             MyHotKeyManager = new HotKeyManager(this);
             MyHotKeyManager.GlobalHotKeyPressed += new GlobalHotKeyEventHandler(MyHotKeyManager_GlobalHotKeyPressed);
-            RegisterHotKeys();
+            RegisterHotKeys(true);
             MyHotKeyManager.DisableOnManagerFormInactive = true;
 
             //Get the resolution of the monitor
@@ -140,7 +138,7 @@ namespace ExternalDirectxOverlayNet2
 
             h = h.ToLower();
 
-            switch (h)                
+            switch (h)
             {
                 case "rengar":
                     {
@@ -222,29 +220,82 @@ namespace ExternalDirectxOverlayNet2
 
         #region HotKey Methods
 
-        void RegisterHotKeys()
+        void RegisterHotKeys(bool firstTime)
         {
-            ghkCustom.Enabled = true;
-            ghkToggleVisibility.Enabled = true;
-            ghkCloseApplication.Enabled = true;
-            ghkOptionsMenu.Enabled = true;
-            ghkNextTalent.Enabled = true;
-            ghkPrevTalent.Enabled = true;
+            if (!firstTime)
+            {
+                MyHotKeyManager.RemoveGlobalHotKey(ghkFindHero);
+                MyHotKeyManager.RemoveGlobalHotKey(ghkToggleVisibility);
+                MyHotKeyManager.RemoveGlobalHotKey(ghkCloseApplication);
+                MyHotKeyManager.RemoveGlobalHotKey(ghkOptionsMenu);
+                MyHotKeyManager.RemoveGlobalHotKey(ghkNextTalent);
+                MyHotKeyManager.RemoveGlobalHotKey(ghkPrevTalent);
+            }
+            Properties.Settings.Default.Reload();
 
-            MyHotKeyManager.AddGlobalHotKey(ghkCustom);
-            MyHotKeyManager.AddGlobalHotKey(ghkToggleVisibility);
-            MyHotKeyManager.AddGlobalHotKey(ghkCloseApplication);
-            MyHotKeyManager.AddGlobalHotKey(ghkOptionsMenu);
-            MyHotKeyManager.AddGlobalHotKey(ghkNextTalent);
-            MyHotKeyManager.AddGlobalHotKey(ghkPrevTalent);
+            var HotKeys = new List<GlobalHotKey>();
+
+            //DEBUG
+            var Debug1 = Properties.Settings.Default.ghkFindHeroBind;
+            var Debug2 = Properties.Settings.Default.ghkToggleVisibilityBind;
+            var Debug3 = Properties.Settings.Default.ghkCloseApplicationBind;
+            var Debug4 = Properties.Settings.Default.ghkOptionsMenuBind;
+            var Debug5 = Properties.Settings.Default.ghkNextTalentBind;
+            var Debug6 = Properties.Settings.Default.ghkPrevTalentBind;
+            
+            ghkFindHero = GetGlobalHotKey("ghkFindHero", Properties.Settings.Default.ghkFindHeroBind);
+            HotKeys.Add(ghkFindHero);
+
+            ghkToggleVisibility = GetGlobalHotKey("ghkToggleVisibility", Properties.Settings.Default.ghkToggleVisibilityBind);
+            HotKeys.Add(ghkToggleVisibility);
+
+            ghkCloseApplication = GetGlobalHotKey("ghkCloseApplication", Properties.Settings.Default.ghkCloseApplicationBind);
+            HotKeys.Add(ghkCloseApplication);
+
+            ghkOptionsMenu = GetGlobalHotKey("ghkOptionsMenu", Properties.Settings.Default.ghkOptionsMenuBind);
+            HotKeys.Add(ghkOptionsMenu);
+
+            ghkNextTalent = GetGlobalHotKey("ghkNextTalent", Properties.Settings.Default.ghkNextTalentBind);
+            HotKeys.Add(ghkNextTalent);
+
+            ghkPrevTalent = GetGlobalHotKey("ghkPrevTalent", Properties.Settings.Default.ghkPrevTalentBind);
+            HotKeys.Add(ghkPrevTalent);
+
+            MyHotKeyManager.SuppressException = true;
+            foreach (GlobalHotKey ghk in HotKeys)
+            {                
+                MyHotKeyManager.AddGlobalHotKey(ghk);
+            }
+            MyHotKeyManager.SuppressException = false;
+        }
+
+        private static GlobalHotKey GetGlobalHotKey(string name, string key)
+        {
+            object[] parsedKeys = HotKeyShared.ParseShortcut(key, ",");
+
+            return new GlobalHotKey(name, (Modifiers)parsedKeys[0], (Keys)parsedKeys[1], true);
+        }
+
+        public static Keys ParseKeyFromGlobalHotKeyString(string key)
+        {
+            object[] parsedKeys = HotKeyShared.ParseShortcut(key, ",");
+
+            return (Keys)parsedKeys[1];
+        }
+
+        public static Modifiers ParseModsFromGlobalHotKeyString(string key)
+        {
+            object[] parsedKeys = HotKeyShared.ParseShortcut(key, ",");
+
+            return (Modifiers)parsedKeys[0];
         }
 
         void MyHotKeyManager_GlobalHotKeyPressed(object sender, GlobalHotKeyEventArgs e)
         {
             switch (e.HotKey.Name.ToLower())
             {
-                case "ghkcustom":
-                    HandleCustomHotKey();
+                case "ghkfindhero":
+                    HandleFindHero();
                     return;
                 case "ghktogglevisibility":
                     ToggleVisibility();
@@ -270,7 +321,7 @@ namespace ExternalDirectxOverlayNet2
             }
         }
 
-        void HandleCustomHotKey()
+        void HandleFindHero()
         {
             if (prompt.Visible)
             {
@@ -288,7 +339,12 @@ namespace ExternalDirectxOverlayNet2
                 optionsMenu.Close();
                 return;
             }
-            optionsMenu.ShowDialog();
+
+            if (optionsMenu.ShowDialog(this) == DialogResult.OK)
+            {
+                //propagate global hot key settings to the current instance here.
+                RegisterHotKeys(false);
+            }
         }
 
         void ToggleVisibility()
@@ -338,9 +394,9 @@ namespace ExternalDirectxOverlayNet2
                 //Place your rendering logic here
                 string dateTime = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt");
                 Size textSize = TextRenderer.MeasureText(dateTime, new Font(new FontFamily("Arial"), 10, FontStyle.Regular));
-                DrawShadowText(dateTime, new Point(this.Width - textSize.Width, 10), Settings1.Default.textColor);
-                //DrawLine(0, 0, this.Width, this.Height, 1, Settings1.Default.textColor);
-                //DrawCircle(500, 500, 100, Settings1.Default.textColor);
+                DrawShadowText(dateTime, new Point(this.Width - textSize.Width, 10), Properties.Settings.Default.TextColor);
+                //DrawLine(0, 0, this.Width, this.Height, 1, Properties.Settings.Default.textColor);
+                //DrawCircle(500, 500, 100, Properties.Settings.Default.textColor);
 
                 //DrawTalentBoxes(500, 500, 4, 3);
                 if (displayTalents && builds != null && builds.Count > 0)
@@ -352,7 +408,7 @@ namespace ExternalDirectxOverlayNet2
                 //sprite.End();
 
                 //Draw frames per second
-                DrawShadowText(GetFPS().ToString(), new Point(10, 10), Settings1.Default.textColor);
+                DrawShadowText(GetFPS().ToString(), new Point(10, 10), Properties.Settings.Default.TextColor);
 
                 device.EndScene();
                 device.Present();
@@ -431,11 +487,11 @@ namespace ExternalDirectxOverlayNet2
         {
             for (int i = 1; i <= total; i++)
             {
-                DrawBox(x + i*20, y, 10, 10, 1, Settings1.Default.textColor);
+                DrawBox(x + i * 20, y, 10, 10, 1, Properties.Settings.Default.TextColor);
                 if (i == selection)
-                    DrawFilledBox(x + i * 20, y, 10, 10, Settings1.Default.textColor);
+                    DrawFilledBox(x + i * 20, y, 10, 10, Properties.Settings.Default.TextColor);
             }
-            
+
         }
 
         public static void DrawBuilds(List<Build> builds)
@@ -454,12 +510,12 @@ namespace ExternalDirectxOverlayNet2
             {
                 buildName = buildName.Insert(buildName.IndexOf(" ", 60, buildName.Length - 60), "\n").Replace("\n ", "\n");
             }
-            DrawShadowText(buildName, new Point(10, yDistance), Settings1.Default.textColor);
+            DrawShadowText(buildName, new Point(10, yDistance), Properties.Settings.Default.TextColor);
             Size textSize = TextRenderer.MeasureText(buildName, new Font(new FontFamily("Arial"), 10, FontStyle.Regular));
             yDistance = yDistance + textSize.Height + (20 - textSize.Height % 20);
             foreach (var talent in build.talents)
             {
-                DrawShadowText(talent.name, new Point(10, yDistance), Settings1.Default.textColor);
+                DrawShadowText(talent.name, new Point(10, yDistance), Properties.Settings.Default.TextColor);
                 DrawTalentBoxes(70, yDistance + 3, talent.total, talent.selection);
                 yDistance = yDistance + 20;
             }
